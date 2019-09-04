@@ -28,7 +28,7 @@ func (a InstanceManagerMock) GetInstance(cid string) (*ecs.Instance, error) {
 	}
 }
 
-func (a InstanceManagerMock) CreateInstance(region string, args *ecs.CreateInstanceRequest) (string, error) {
+func (a InstanceManagerMock) CreateInstance(region string, args *ecs.RunInstancesRequest) (string, error) {
 	id, inst := a.mc.NewInstance()
 
 	inst.RegionId = args.RegionId

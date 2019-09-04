@@ -32,7 +32,7 @@ const (
 type InstanceManager interface {
 	GetInstance(cid string) (*ecs.Instance, error)
 
-	CreateInstance(region string, args *ecs.CreateInstanceRequest) (string, error)
+	CreateInstance(region string, args *ecs.RunInstancesRequest) (string, error)
 	ModifyInstanceAttribute(cid string, name string, description string) error
 	AddTags(cid string, tags map[string]string) error
 
@@ -100,8 +100,9 @@ func (a InstanceManagerImpl) GetInstance(cid string) (inst *ecs.Instance, err er
 	return
 }
 
-func (a InstanceManagerImpl) CreateInstance(region string, args *ecs.CreateInstanceRequest) (string, error) {
+func (a InstanceManagerImpl) CreateInstance(region string, args *ecs.RunInstancesRequest) (string, error) {
 	client, err := a.config.NewEcsClient(region)
+	args.RegionId = region
 	if err != nil {
 		return "", err
 	}
@@ -116,9 +117,9 @@ func (a InstanceManagerImpl) CreateInstance(region string, args *ecs.CreateInsta
 
 	var cid string
 	err = invoker.Run(func() error {
-		resp, e := client.CreateInstance(args)
-		if resp != nil {
-			cid = resp.InstanceId
+		resp, e := client.RunInstances(args)
+		if e == nil {
+			cid = resp.InstanceIdSets.InstanceIdSet[0]
 		}
 		return e
 	})
@@ -302,7 +303,7 @@ func (a InstanceManagerImpl) ChangeInstanceStatus(cid string, toStatus InstanceS
 	}
 }
 
-func (a InstanceManagerImpl) GetAttachedNetworkInterfaceIds (cid string) []string{
+func (a InstanceManagerImpl) GetAttachedNetworkInterfaceIds(cid string) []string {
 	inst, _ := a.GetInstance(cid)
 	eniIds := []string{}
 	if inst != nil {

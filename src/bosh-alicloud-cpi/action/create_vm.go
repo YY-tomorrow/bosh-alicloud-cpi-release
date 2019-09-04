@@ -112,7 +112,7 @@ func (a CreateVMMethod) CreateVM(
 		networks.privateProps.SecurityGroupIds = instProps.SecurityGroupIds
 	}
 
-	args := ecs.CreateCreateInstanceRequest()
+	args := ecs.CreateRunInstancesRequest()
 	if err := networks.FillCreateInstanceArgs(args); err != nil {
 		return cid, a.WrapErrorf(err, "fill instance network args failed and args: %v", networks.privateProps)
 	}

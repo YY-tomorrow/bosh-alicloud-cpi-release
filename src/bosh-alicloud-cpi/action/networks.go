@@ -72,7 +72,7 @@ func (a Networks) HasVip() bool {
 	return len(a.vips) > 0
 }
 
-func (a Networks) FillCreateInstanceArgs(args *ecs.CreateInstanceRequest) error {
+func (a Networks) FillCreateInstanceArgs(args *ecs.RunInstancesRequest) error {
 	props := a.privateProps
 
 	if props.VSwitchId == "" {

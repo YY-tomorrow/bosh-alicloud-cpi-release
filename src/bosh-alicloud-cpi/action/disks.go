@@ -11,7 +11,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"
 	bosherr "github.com/cloudfoundry/bosh-utils/errors"
 	"github.com/cppforlife/bosh-cpi-go/apiv1"
@@ -176,8 +175,8 @@ func (a DiskInfo) GetPath() string {
 	return a.path
 }
 
-func (a Disks) FillCreateInstanceArgs(golbalEncrypt *bool, args *ecs.CreateInstanceRequest) {
-	args.SystemDiskSize = requests.NewInteger(a.SystemDisk.sizeGB)
+func (a Disks) FillCreateInstanceArgs(golbalEncrypt *bool, args *ecs.RunInstancesRequest) {
+	args.SystemDiskSize = strconv.Itoa(a.SystemDisk.GetSizeGB())
 	args.SystemDiskCategory = string(a.SystemDisk.ecsCategory)
 
 	encrypt := a.EphemeralDisk.Encrypted
@@ -194,8 +193,8 @@ func (a Disks) FillCreateInstanceArgs(golbalEncrypt *bool, args *ecs.CreateInsta
 		*deleteWithInstance = true
 	}
 	if a.EphemeralDisk.sizeGB > 0 {
-		var disks []ecs.CreateInstanceDataDisk
-		disks = append(disks, ecs.CreateInstanceDataDisk{
+		var disks []ecs.RunInstancesDataDisk
+		disks = append(disks, ecs.RunInstancesDataDisk{
 			Size:               strconv.Itoa(a.EphemeralDisk.sizeGB),
 			Category:           string(a.EphemeralDisk.GetCategory()),
 			Encrypted:          strconv.FormatBool(*encrypt),
